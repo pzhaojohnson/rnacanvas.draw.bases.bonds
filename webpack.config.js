@@ -20,7 +20,7 @@ module.exports = {
     filename: 'index.js',
     globalObject: 'this',
     library: {
-      name: 'draw.bonds',
+      name: 'draw.bases.bonds',
       type: 'umd',
     },
     clean: true,
