@@ -4,6 +4,8 @@
 
 import { SavedStraightBond } from './SavedStraightBond';
 
+import { NucleobaseMock } from './NucleobaseMock';
+
 const SVGLineElementMock = {
   create: () => {
     let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -15,14 +17,6 @@ const SVGLineElementMock = {
 
     return line;
   },
-}
-
-class NucleobaseMock {
-  id = `id-${Math.random()}`;
-
-  centerPoint = { x: 0, y: 0 };
-
-  addEventListener() {}
 }
 
 class DrawingMock {

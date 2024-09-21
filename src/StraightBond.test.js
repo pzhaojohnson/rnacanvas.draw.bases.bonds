@@ -6,6 +6,8 @@ import { StraightBond } from './StraightBond';
 
 import * as SVG from '@svgdotjs/svg.js';
 
+import { NucleobaseMock } from './NucleobaseMock';
+
 import { distance } from '@rnacanvas/points';
 
 const SVGLineElement = (new SVG.Line()).node.constructor;
@@ -31,20 +33,6 @@ function createSVGLineElement() {
   return (new SVG.Line()).node;
 }
 
-class NucleobaseMock {
-  centerPoint = { x: 0, y: 0 };
-
-  hasParent = () => false;
-
-  eventListeners = {
-    'move': [],
-  };
-
-  addEventListener(eventName, listener) {
-    this.eventListeners[eventName].push(listener);
-  }
-}
-
 describe('StraightBond class', () => {
   describe('between static method', () => {
     it('passes bases 1 and 2 to the newly created straight bond in the correct order', () => {
@@ -68,8 +56,8 @@ describe('StraightBond class', () => {
       let base1 = new NucleobaseMock();
       let base2 = new NucleobaseMock();
 
-      base1.centerPoint = { x: 512.8, y: 88.7 };
-      base2.centerPoint = { x: -102.4, y: -33 };
+      base1.centerPoint.set({ x: 512.8, y: 88.7 });
+      base2.centerPoint.set({ x: -102.4, y: -33 });
 
       let sb = StraightBond.between(base1, base2);
 
@@ -325,14 +313,14 @@ describe('StraightBond class', () => {
     let base1 = new NucleobaseMock();
     let base2 = new NucleobaseMock();
 
-    base1.centerPoint = { x: 15, y: 5 };
-    base2.centerPoint = { x: 45, y: 5 };
+    base1.centerPoint.set({ x: 15, y: 5 });
+    base2.centerPoint.set({ x: 45, y: 5 });
 
     let sb = new StraightBond(line, base1, base2);
     expect(sb.basePadding1).toBeCloseTo(3);
 
     // must account for the movement of base 1
-    base1.centerPoint = { x: 45, y: 50 };
+    base1.centerPoint.set({ x: 45, y: 50 });
 
     // has not changed yet
     expect(sb.basePadding1).toBeCloseTo(3);
@@ -392,14 +380,14 @@ describe('StraightBond class', () => {
     let base1 = new NucleobaseMock();
     let base2 = new NucleobaseMock();
 
-    base1.centerPoint = { x: 9, y: -8 };
-    base2.centerPoint = { x: 9, y: 30 };
+    base1.centerPoint.set({ x: 9, y: -8 });
+    base2.centerPoint.set({ x: 9, y: 30 });
 
     let sb = new StraightBond(line, base1, base2);
     expect(sb.basePadding2).toBeCloseTo(6);
 
     // must account for the movement of base 2
-    base2.centerPoint = { x: -30, y: -8 };
+    base2.centerPoint.set({ x: -30, y: -8 });
 
     // has not changed yet
     expect(sb.basePadding2).toBeCloseTo(6);
@@ -452,8 +440,8 @@ describe('StraightBond class', () => {
     let base1 = new NucleobaseMock();
     let base2 = new NucleobaseMock();
 
-    base1.centerPoint = { x: 60, y: 10 };
-    base2.centerPoint = { x: 68, y: -5 };
+    base1.centerPoint.set({ x: 60, y: 10 });
+    base2.centerPoint.set({ x: 68, y: -5 });
     expect(distance(base1.centerPoint, base2.centerPoint)).toBeCloseTo(17);
 
     let sb = StraightBond.between(base1, base2);

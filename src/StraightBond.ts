@@ -78,8 +78,8 @@ export class StraightBond<B extends Nucleobase> {
     this.cachedBasePadding1 = distance(this.point1, this.base1.centerPoint);
     this.cachedBasePadding2 = distance(this.point2, this.base2.centerPoint);
 
-    base1.addEventListener('move', () => this.reposition());
-    base2.addEventListener('move', () => this.reposition());
+    base1.centerPoint.addEventListener('move', () => this.reposition());
+    base2.centerPoint.addEventListener('move', () => this.reposition());
   }
 
   /**

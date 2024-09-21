@@ -1,21 +1,17 @@
 /**
- * A two-dimensional point.
- */
-export type Point = {
-  x: number;
-  y: number;
-};
-
-/**
  * The nucleobase interface used by bonds.
  */
 export interface Nucleobase {
   readonly id: string;
 
-  readonly centerPoint: Point;
+  readonly centerPoint: {
+    x: number;
+    y: number;
 
-  /**
-   * Allows one to listen for when the nucleobase moves (i.e., its center point changes).
-   */
-  addEventListener(eventName: 'move', listener: () => void): void;
+    /**
+     * The added listener is to be called whenever the X or Y coordinates
+     * of the point change.
+     */
+    addEventListener(name: 'move', listener: () => void): void;
+  };
 }
