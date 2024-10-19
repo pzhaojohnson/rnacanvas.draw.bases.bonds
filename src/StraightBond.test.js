@@ -468,4 +468,94 @@ describe('StraightBond class', () => {
     expect(sb.basePadding1).toBeCloseTo(8.719);
     expect(sb.basePadding2).toBeCloseTo(15.42);
   });
+
+  test('`serialized()`', () => {
+    let sb = StraightBond.between(new NucleobaseMock(), new NucleobaseMock());
+
+    sb.domNode.id = 'id-7851826';
+    expect(sb.serialized().id).toBe('id-7851826');
+
+    sb.base1.id = 'id-869172';
+    sb.base2.id = 'id-0316824';
+    expect(sb.serialized().baseID1).toBe('id-869172');
+    expect(sb.serialized().baseID2).toBe('id-0316824');
+
+    sb.basePadding1 = 8.6718;
+    sb.basePadding2 = 12.74815;
+    expect(sb.serialized().basePadding1).toBeCloseTo(8.6718);
+    expect(sb.serialized().basePadding2).toBeCloseTo(12.74815);
+  });
+
+  test('`static deserialized()`', () => {
+    let parentDrawing = new DrawingMock();
+
+    expect(parentDrawing.bases.length).toBeGreaterThanOrEqual(8);
+    let base1 = parentDrawing.bases[6];
+    let base2 = parentDrawing.bases[3];
+
+    let sb1 = StraightBond.between(base1, base2);
+
+    expect(parentDrawing.domNode.childNodes.length).toBeGreaterThanOrEqual(8);
+    parentDrawing.domNode.insertBefore(sb1.domNode, parentDrawing.domNode.childNodes[5]);
+
+    sb1.basePadding1 = 12.7846174;
+    sb1.basePadding2 = 4.76824;
+
+    // JSDOM does not define `SVGLineElement`
+    expect(globalThis.SVGLineElement).toBeFalsy();
+    globalThis.SVGLineElement = SVGElement;
+
+    let sb2 = StraightBond.deserialized(sb1.serialized(), parentDrawing);
+
+    expect(sb2.domNode).toBe(sb1.domNode);
+
+    expect(sb2.base1).toBe(sb1.base1);
+    expect(sb2.base2).toBe(sb1.base2);
+
+    expect(sb2.basePadding1).toBeCloseTo(12.7846174);
+    expect(sb2.basePadding2).toBeCloseTo(4.76824);
+
+    // straight bond IDs used to be saved under `lineId`
+    sb2 = StraightBond.deserialized({ ...sb1.serialized(), id: undefined, lineId: sb1.id }, parentDrawing);
+    expect(sb2.domNode).toBe(sb1.domNode);
+
+    // base ID 1 used to be saved under `baseId1`
+    sb2 = StraightBond.deserialized({ ...sb1.serialized(), baseID1: undefined, baseId1: sb1.base1.id }, parentDrawing);
+    expect(sb2.base1).toBe(sb1.base1);
+
+    // base ID 2 used to be saved under `baseId2`
+    sb2 = StraightBond.deserialized({ ...sb1.serialized(), baseID2: undefined, baseId2: sb1.base2.id }, parentDrawing);
+    expect(sb2.base2).toBe(sb1.base2);
+  });
 });
+
+class DrawingMock {
+  bases = [
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+    new NucleobaseMock(),
+  ];
+
+  constructor() {
+    this.domNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'circle'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'ellipse'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'rect'));
+    this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+  }
+}

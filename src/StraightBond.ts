@@ -2,11 +2,13 @@ import * as SVG from '@svgdotjs/svg.js';
 
 import type { Nucleobase } from './Nucleobase';
 
+import type { Drawing } from './Drawing';
+
 import { assignUUID } from '@rnacanvas/draw.svg';
 
 import { distance, direction } from '@rnacanvas/points';
 
-import { isFiniteNumber } from '@rnacanvas/value-check';
+import { isNumber, isFiniteNumber } from '@rnacanvas/value-check';
 
 import { isNonNullObject } from '@rnacanvas/value-check';
 
@@ -332,5 +334,69 @@ export class StraightBond<B extends Nucleobase> {
     this.setAttribute('y1', `${centerPoint1.y + (this.basePadding1 * Math.sin(a))}`);
     this.setAttribute('x2', `${centerPoint2.x - (this.basePadding2 * Math.cos(a))}`);
     this.setAttribute('y2', `${centerPoint2.y - (this.basePadding2 * Math.sin(a))}`);
+  }
+
+  /**
+   * Returns the serialized form of the straight bond,
+   * which is used when saving drawings.
+   *
+   * Throws if unable to properly do so
+   * (e.g., the straight bond or one of its bases has a falsy ID).
+   */
+  serialized() {
+    let id = this.id;
+    if (!id) { throw new Error('Straight bond ID is falsy.'); }
+
+    let baseID1 = this.base1.id;
+    if (!baseID1) { throw new Error('Base 1 ID is falsy.'); }
+
+    let baseID2 = this.base2.id;
+    if (!baseID2) { throw new Error('Base 2 ID is falsy.'); }
+
+    // allows base paddings to be more precisely restored when recreating saved straight bonds
+    let basePadding1 = this.basePadding1;
+    let basePadding2 = this.basePadding2;
+
+    return { id, baseID1, baseID2, basePadding1, basePadding2 };
+  }
+
+  /**
+   * Recreates a saved straight bond from its serialized form.
+   *
+   * Throws if unable to do so.
+   *
+   * @param savedBond The serialized form of a saved straight bond.
+   * @param parentDrawing The drawing that the saved straight bond is in.
+   */
+  static deserialized<B extends Nucleobase>(savedBond: unknown, parentDrawing: Drawing<B>) {
+    if (!isNonNullObject(savedBond)) { throw new Error('Saved straight bond must be an object.'); }
+
+    // straight bond IDs used to be saved under `lineId`
+    let id = savedBond.id ?? savedBond.lineId;
+    if (!id) { throw new Error('Straight bond ID is missing.'); }
+
+    let domNode = parentDrawing.domNode.querySelector('#' + id);
+    if (!domNode) { throw new Error('Unable to find straight bond DOM node.'); }
+    if (!(domNode instanceof SVGLineElement)) { throw new Error('Straight bond DOM node must be an SVG line element.'); }
+
+    // base IDs used to be saved under `baseId1` and `baseId2`
+    let baseID1 = savedBond.baseID1 ?? savedBond.baseId1;
+    let baseID2 = savedBond.baseID2 ?? savedBond.baseId2;
+
+    if (!baseID1) { throw new Error('Missing base 1 ID.'); }
+    if (!baseID2) { throw new Error('Missing base 2 ID.'); }
+
+    let base1 = [...parentDrawing.bases].find(b => b.id === baseID1);
+    let base2 = [...parentDrawing.bases].find(b => b.id === baseID2);
+
+    if (!base1) { throw new Error('Unable to find base 1.'); }
+    if (!base2) { throw new Error('Unable to find base 2.'); }
+
+    let sb = new StraightBond(domNode, base1, base2);
+
+    if (isNumber(savedBond.basePadding1)) { sb.basePadding1 = savedBond.basePadding1; }
+    if (isNumber(savedBond.basePadding2)) { sb.basePadding2 = savedBond.basePadding2; }
+
+    return sb;
   }
 }
