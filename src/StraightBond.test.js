@@ -68,6 +68,70 @@ describe('StraightBond class', () => {
     });
   });
 
+  test('`constructor()`', () => {
+    let drawing = new DrawingMock();
+
+    let domNode = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+
+    let base1 = [...drawing.bases][4];
+    let base2 = [...drawing.bases][8];
+
+    expect(base1).toBeTruthy();
+    expect(base2).toBeTruthy();
+
+    var sb = new StraightBond(domNode, base1, base2);
+
+    expect(sb.domNode).toBe(domNode);
+    expect(sb.base1).toBe(base1);
+    expect(sb.base2).toBe(base2);
+
+    domNode.x1 = { baseVal: { value: 8.34 } };
+    domNode.y1 = { baseVal: { value: -80 } };
+    domNode.x2 = { baseVal: { value: 123 } };
+    domNode.y2 = { baseVal: { value: 62 } };
+
+    base1.centerPoint.x = 20;
+    base1.centerPoint.y = 5;
+    base2.centerPoint.x = 101;
+    base2.centerPoint.y = 98.1;
+
+    domNode.removeAttribute('data-base-padding1');
+    domNode.removeAttribute('data-base-padding2');
+
+    var sb = new StraightBond(domNode, base1, base2);
+
+    // calculates and caches base paddings (when not already cached)
+    expect(Number.parseFloat(domNode.dataset.basePadding1)).toBeCloseTo(85.79601156230981, 6);
+    expect(Number.parseFloat(domNode.dataset.basePadding2)).toBeCloseTo(42.27540656220824, 6);
+
+    // does not override already cached base paddings
+    domNode.dataset.basePadding1 = '7.871924';
+    domNode.dataset.basePadding2 = '-18.3194';
+
+    var sb = new StraightBond(domNode, base1, base2);
+
+    expect(Number.parseFloat(domNode.dataset.basePadding1)).toBe(7.871924);
+    expect(Number.parseFloat(domNode.dataset.basePadding2)).toBe(-18.3194);
+
+    domNode.removeAttribute('x1');
+    domNode.removeAttribute('y1');
+
+    // sets up a listener for base 1 movement
+    base1.centerPoint.x += 20;
+
+    expect(domNode.getAttribute('x1')).toBeTruthy();
+    expect(domNode.getAttribute('y1')).toBeTruthy();
+
+    domNode.removeAttribute('x2');
+    domNode.removeAttribute('y2');
+
+    // sets up a listener for base 2 movement
+    base2.centerPoint.y -= 10;
+
+    expect(domNode.getAttribute('x2')).toBeTruthy();
+    expect(domNode.getAttribute('y2')).toBeTruthy();
+  });
+
   test('basePair getter', () => {
     let base1 = new NucleobaseMock();
     let base2 = new NucleobaseMock();
@@ -332,6 +396,10 @@ describe('StraightBond class', () => {
     expect(Number.parseFloat(sb.getAttribute('y1'))).toBeCloseTo(43);
     expect(Number.parseFloat(sb.getAttribute('x2'))).toBeCloseTo(45);
     expect(Number.parseFloat(sb.getAttribute('y2'))).toBeCloseTo(13);
+
+    // converts nonfinite values to zero
+    sb.domNode.dataset.basePadding1 = 'asdf';
+    expect(sb.basePadding1).toBe(0);
   });
 
   describe('setBasePadding1 method', () => {
@@ -399,6 +467,10 @@ describe('StraightBond class', () => {
     expect(Number.parseFloat(sb.getAttribute('y1'))).toBeCloseTo(-8);
     expect(Number.parseFloat(sb.getAttribute('x2'))).toBeCloseTo(-19.5);
     expect(Number.parseFloat(sb.getAttribute('y2'))).toBeCloseTo(-8);
+
+    // converts nonfinite values to zero
+    sb.domNode.dataset.basePadding2 = 'asdf';
+    expect(sb.basePadding2).toBe(0);
   });
 
   describe('setBasePadding2 method', () => {
@@ -479,11 +551,6 @@ describe('StraightBond class', () => {
     sb.base2.id = 'id-0316824';
     expect(sb.serialized().baseID1).toBe('id-869172');
     expect(sb.serialized().baseID2).toBe('id-0316824');
-
-    sb.basePadding1 = 8.6718;
-    sb.basePadding2 = 12.74815;
-    expect(sb.serialized().basePadding1).toBeCloseTo(8.6718);
-    expect(sb.serialized().basePadding2).toBeCloseTo(12.74815);
   });
 
   test('`static deserialized()`', () => {
@@ -526,6 +593,12 @@ describe('StraightBond class', () => {
     // base ID 2 used to be saved under `baseId2`
     sb2 = StraightBond.deserialized({ ...sb1.serialized(), baseID2: undefined, baseId2: sb1.base2.id }, parentDrawing);
     expect(sb2.base2).toBe(sb1.base2);
+
+    // base paddings used to be saved as JSON properties
+    sb2 = StraightBond.deserialized({ ...sb1.serialized(), basePadding1: -8.735814, basePadding2: 65.41487 }, parentDrawing);
+
+    expect(sb2.basePadding1).toBeCloseTo(-8.735814, 6);
+    expect(sb2.basePadding2).toBeCloseTo(65.41487, 6);
   });
 });
 

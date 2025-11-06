@@ -66,9 +66,6 @@ export class StraightBond<B extends Nucleobase> {
     return sb;
   }
 
-  private cachedBasePadding1: number;
-  private cachedBasePadding2: number;
-
   /**
    * Note that this constructor will not apply any default values to the newly created straight bond.
    *
@@ -77,8 +74,13 @@ export class StraightBond<B extends Nucleobase> {
    * @param base2 Base 2 connected by the bond.
    */
   constructor(private line: SVGLineElement, readonly base1: B, readonly base2: B) {
-    this.cachedBasePadding1 = distance(this.point1, this.base1.centerPoint);
-    this.cachedBasePadding2 = distance(this.point2, this.base2.centerPoint);
+    if (!this.domNode.dataset.basePadding1) {
+      this.domNode.dataset.basePadding1 = `${distance(this.point1, this.base1.centerPoint)}`;
+    }
+
+    if (!this.domNode.dataset.basePadding2) {
+      this.domNode.dataset.basePadding2 = `${distance(this.point2, this.base2.centerPoint)}`;
+    }
 
     base1.centerPoint.addEventListener('move', () => this.reposition());
     base2.centerPoint.addEventListener('move', () => this.reposition());
@@ -234,14 +236,21 @@ export class StraightBond<B extends Nucleobase> {
    * (This is to allow for proper repositioning of the straight bond after its bases have been moved.)
    */
   get basePadding1(): number {
-    return this.cachedBasePadding1;
+    let basePadding1 = Number.parseFloat(this.domNode.dataset.basePadding1 ?? '');
+
+    if (Number.isFinite(basePadding1)) {
+      return basePadding1;
+    } else {
+      return 0;
+    }
   }
 
   /**
    * Will reposition the straight bond.
    */
   set basePadding1(basePadding1) {
-    this.cachedBasePadding1 = basePadding1;
+    this.domNode.dataset.basePadding1 = `${basePadding1}`;
+
     this.reposition();
   }
 
@@ -267,14 +276,21 @@ export class StraightBond<B extends Nucleobase> {
    * (This is to allow for proper repositioning of the straight bond after its bases have been moved.)
    */
   get basePadding2(): number {
-    return this.cachedBasePadding2;
+    let basePadding2 = Number.parseFloat(this.domNode.dataset.basePadding2 ?? '');
+
+    if (Number.isFinite(basePadding2)) {
+      return basePadding2;
+    } else {
+      return 0;
+    }
   }
 
   /**
    * Will reposition the straight bond.
    */
   set basePadding2(basePadding2) {
-    this.cachedBasePadding2 = basePadding2;
+    this.domNode.dataset.basePadding2 = `${basePadding2}`;
+
     this.reposition();
   }
 
@@ -353,11 +369,7 @@ export class StraightBond<B extends Nucleobase> {
     let baseID2 = this.base2.id;
     if (!baseID2) { throw new Error('Base 2 ID is falsy.'); }
 
-    // allows base paddings to be more precisely restored when recreating saved straight bonds
-    let basePadding1 = this.basePadding1;
-    let basePadding2 = this.basePadding2;
-
-    return { id, baseID1, baseID2, basePadding1, basePadding2 };
+    return { id, baseID1, baseID2 };
   }
 
   /**
@@ -394,6 +406,7 @@ export class StraightBond<B extends Nucleobase> {
 
     let sb = new StraightBond(domNode, base1, base2);
 
+    // base paddings used to be saved as JSON object properties
     if (isNumber(savedBond.basePadding1)) { sb.basePadding1 = savedBond.basePadding1; }
     if (isNumber(savedBond.basePadding2)) { sb.basePadding2 = savedBond.basePadding2; }
 
