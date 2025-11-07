@@ -541,6 +541,47 @@ describe('StraightBond class', () => {
     expect(sb.basePadding2).toBeCloseTo(15.42);
   });
 
+  test('`addEventListener()`', async () => {
+    var drawing = new DrawingMock();
+
+    var sb = StraightBond. between([...drawing.bases][1], [...drawing.bases][5]);
+
+    var listeners = [jest.fn(), jest.fn(), jest.fn()];
+    listeners.forEach(li => sb.addEventListener('change', li));
+
+    listeners.forEach(li => expect(li).not.toHaveBeenCalled());
+
+    sb.basePadding1 += 10;
+    await wait(100);
+    listeners.forEach(li => expect(li).toHaveBeenCalledTimes(1));
+
+    // listeners are called even for direct DOM node manipulations
+    sb.domNode.setAttribute('stroke-width', '5');
+    await wait(100);
+    listeners.forEach(li => expect(li).toHaveBeenCalledTimes(2));
+  });
+
+  test('`removeEventListener()`', async () => {
+    var drawing = new DrawingMock();
+
+    var sb = StraightBond. between([...drawing.bases][1], [...drawing.bases][5]);
+
+    var listener = jest.fn();
+    sb.addEventListener('change', listener);
+
+    sb.basePadding1 += 10;
+    await wait(100);
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    sb.removeEventListener('change', listener);
+
+    sb.basePadding1 += 10;
+    await wait(100);
+
+    // was not called again
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
   test('`serialized()`', () => {
     let sb = StraightBond.between(new NucleobaseMock(), new NucleobaseMock());
 
@@ -631,4 +672,8 @@ class DrawingMock {
     this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'rect'));
     this.domNode.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
   }
+}
+
+async function wait(milliseconds) {
+  return new Promise(resolve => setTimeout(() => resolve(), milliseconds));
 }

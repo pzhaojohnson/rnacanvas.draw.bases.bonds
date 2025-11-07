@@ -66,6 +66,12 @@ export class StraightBond<B extends Nucleobase> {
     return sb;
   }
 
+  #eventListeners: EventListeners = {
+    'change': [],
+  };
+
+  #domNodeObserver = new MutationObserver(() => this.#dispatchEvent('change'));
+
   /**
    * Note that this constructor will not apply any default values to the newly created straight bond.
    *
@@ -84,6 +90,9 @@ export class StraightBond<B extends Nucleobase> {
 
     base1.centerPoint.addEventListener('move', () => this.reposition());
     base2.centerPoint.addEventListener('move', () => this.reposition());
+
+    // watch for any changes
+    this.#domNodeObserver.observe(line, { attributes: true, childList: true, characterData: true, subtree: true });
   }
 
   /**
@@ -352,6 +361,18 @@ export class StraightBond<B extends Nucleobase> {
     this.setAttribute('y2', `${centerPoint2.y - (this.basePadding2 * Math.sin(a))}`);
   }
 
+  addEventListener(name: 'change', listener: () => void): void {
+    this.#eventListeners[name].push(listener);
+  }
+
+  removeEventListener(name: 'change', listener: () => void): void {
+    this.#eventListeners[name] = this.#eventListeners[name].filter(li => li !== listener);
+  }
+
+  #dispatchEvent(name: 'change'): void {
+    this.#eventListeners[name].forEach(listener => listener());
+  }
+
   /**
    * Returns the serialized form of the straight bond,
    * which is used when saving drawings.
@@ -413,3 +434,9 @@ export class StraightBond<B extends Nucleobase> {
     return sb;
   }
 }
+
+type EventListeners = {
+  'change': Listener[],
+};
+
+type Listener = () => void;
