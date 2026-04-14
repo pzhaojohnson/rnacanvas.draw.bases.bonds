@@ -306,13 +306,31 @@ describe('StraightBond class', () => {
     expect(sb.length).toBe(18.0273994);
   });
 
-  test('getPointAtLength method', () => {
-    let line = createSVGLineElement();
-    line.getPointAtLength = length => length === 17.48 ? { x: 84.02, y: -12.338 } : { x: 0, y: 0 };
+  test('`getPointAtLength()`', () => {
+    var line = createSVGLineElement();
 
-    let sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
+    line.x1 = { baseVal: { value: 2 } };
+    line.y1 = { baseVal: { value: -12 } };
 
-    expect(sb.getPointAtLength(17.48)).toStrictEqual({ x: 84.02, y: -12.338 });
+    line.x2 = { baseVal: { value: 27 } };
+    line.y2 = { baseVal: { value: 59 } };
+
+    var direction = Math.atan2(59 - (-12), 27 - 2);
+
+    line.getPointAtLength = length => ({
+      x: 2 + (length * Math.cos(direction)),
+      y: (-12) + (length * Math.sin(direction)),
+    });
+
+    var sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
+
+    expect(sb.getPointAtLength(17.48)).toStrictEqual({
+      x: 7.80554708752997,
+      y: 4.487753728585112,
+
+      // includes direction
+      direction,
+    });
   });
 
   describe('point1 getter', () => {
@@ -372,6 +390,20 @@ describe('StraightBond class', () => {
       expect(line.getPointAtLength).not.toHaveBeenCalled();
       expect(line.getTotalLength).not.toHaveBeenCalled();
     });
+  });
+
+  test('`get direction()`', () => {
+    var line = createSVGLineElement();
+
+    line.x1 = { baseVal: { value: 2 } };
+    line.y1 = { baseVal: { value: -12 } };
+
+    line.x2 = { baseVal: { value: 27 } };
+    line.y2 = { baseVal: { value: 59 } };
+
+    var sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
+
+    expect(sb.direction).toBeCloseTo(Math.atan2(59 - (-12), 27 - 2));
   });
 
   test('basePadding1 getter and setter', () => {

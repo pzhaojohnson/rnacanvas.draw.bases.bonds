@@ -216,8 +216,15 @@ export class StraightBond<B extends Nucleobase> {
    *
    * Note that this method might throw if the straight bond has not been added to the document of the webpage.
    */
-  getPointAtLength(length: number): Point | never {
-    return this.domNode.getPointAtLength(length);
+  getPointAtLength(length: number) {
+    let p = this.domNode.getPointAtLength(length);
+
+    return {
+      x: p.x,
+      y: p.y,
+
+      direction: this.direction,
+    };
   }
 
   /**
@@ -242,6 +249,13 @@ export class StraightBond<B extends Nucleobase> {
       x: this.domNode.x2.baseVal.value,
       y: this.domNode.y2.baseVal.value,
     };
+  }
+
+  /**
+   * The direction from point 1 to point 2 of the straight bond (in radians).
+   */
+  get direction(): number {
+    return direction(this.point1, this.point2);
   }
 
   /**
