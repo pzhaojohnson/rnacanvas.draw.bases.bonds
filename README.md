@@ -25,8 +25,8 @@ connecting two bases
 
 The length of the line of a straight bond.
 
-<b>Note that this property may not hold correct values
-for straight bonds that have not been added to a drawing that is part of the document body.</b>
+<b>This property might not hold correct values
+if a straight bond has not been added to a drawing that is part of the document body.</b>
 
 ```javascript
 // an RNAcanvas drawing
@@ -97,7 +97,7 @@ sb.atLength(5).direction; // Math.PI / 2
 
 The direction angle from point 1 to point 2 of a straight bond (in radians).
 
-<b>This property may not hold correct values
+<b>This property might not hold correct values
 if a straight bond has not been added to a drawing that is part of the document body.</b>
 
 ```javascript
