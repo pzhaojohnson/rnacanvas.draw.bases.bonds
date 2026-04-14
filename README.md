@@ -23,7 +23,7 @@ connecting two bases
 
 ### `readonly length`
 
-The length of the line of the straight bond.
+The length of the line of a straight bond.
 
 <b>Note that this property may not hold correct values
 for straight bonds that have not been added to a drawing that is part of the document body.</b>
