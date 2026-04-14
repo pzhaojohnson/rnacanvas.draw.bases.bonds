@@ -55,6 +55,40 @@ sb.basePadding2 = 2;
 sb.length; // 7
 ```
 
+### `readonly direction`
+
+The direction angle from point 1 to point 2 of a straight bond (in radians).
+
+<b>This property may not hold correct values
+if a straight bond has not been added to a drawing that is part of the document body.</b>
+
+```javascript
+// an RNAcanvas drawing
+var drawing = new Drawing();
+
+// add to the document body
+document.body.append(drawing.domNode);
+
+var base1 = drawing.addBase('G');
+var base2 = drawing.addBase('C');
+
+base1.centerX = 0;
+base1.centerY = 0;
+
+base2.centerX = 10;
+base2.centerY = 10;
+
+var sb = StraightBond.between(base1, base2);
+
+// add to the drawing
+drawing.domNode.append(sb.domNode);
+
+sb.basePadding1 = 0;
+sb.basePadding2 = 0;
+
+sb.direction; // Math.PI / 4
+```
+
 ### `addEventListener()`
 
 Can be used to listen for any changes to a straight bond.
