@@ -21,6 +21,39 @@ A bond composed of an SVG line element
 connecting two bases
 (e.g., a primary or secondary bond).
 
+### `readonly length`
+
+The length of the line of the straight bond.
+
+<b>Note that this property may not hold correct values
+for straight bonds that have not been added to a drawing that is part of the document body.</b>
+
+```javascript
+var drawing = new Drawing();
+
+// add to the document body
+document.body.append(drawing.domNode);
+
+var base1 = drawing.addBase('A');
+var base2 = drawing.addBase('U');
+
+var sb = StraightBond.between(base1, base2);
+
+// add to the drawing
+drawing.domNode.append(sb.domNode);
+
+base1.centerX = 0;
+base1.centerY = 0;
+
+base2.centerX = 10;
+base2.centerY = 0;
+
+sb.basePadding1 = 1;
+sb.basePadding2 = 2;
+
+sb.length; // 7
+```
+
 ### `addEventListener()`
 
 Can be used to listen for any changes to a straight bond.
