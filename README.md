@@ -29,6 +29,7 @@ The length of the line of a straight bond.
 for straight bonds that have not been added to a drawing that is part of the document body.</b>
 
 ```javascript
+// an RNAcanvas drawing
 var drawing = new Drawing();
 
 // add to the document body
