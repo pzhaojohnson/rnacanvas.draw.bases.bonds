@@ -315,6 +315,8 @@ describe('StraightBond class', () => {
     line.x2 = { baseVal: { value: 27 } };
     line.y2 = { baseVal: { value: 59 } };
 
+    line.getTotalLength = () => ((2 - 27)**2 + ((-12) - 59)**2)**0.5;
+
     var direction = Math.atan2(59 - (-12), 27 - 2);
 
     line.getPointAtLength = length => ({
@@ -324,13 +326,24 @@ describe('StraightBond class', () => {
 
     var sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
 
-    expect(sb.getPointAtLength(17.48)).toStrictEqual({
-      x: 7.80554708752997,
-      y: 4.487753728585112,
+    // a length in the middle of the straight bond
+    expect(sb.getPointAtLength(17.48).x).toBeCloseTo(7.80554708752997);
+    expect(sb.getPointAtLength(17.48).y).toBeCloseTo(4.487753728585112);
 
-      // includes direction
-      direction,
-    });
+    // includes direction
+    expect(sb.getPointAtLength(17.48).direction).toBeCloseTo(direction);
+
+    // negative length
+    expect(sb.getPointAtLength(-10).x).toBeCloseTo(2);
+    expect(sb.getPointAtLength(-10).y).toBeCloseTo(-12);
+
+    expect(sb.getPointAtLength(-10).direction).toBeCloseTo(direction);
+
+    // length greater than the length of the straight bond
+    expect(sb.getPointAtLength(1000).x).toBeCloseTo(27);
+    expect(sb.getPointAtLength(1000).y).toBeCloseTo(59);
+
+    expect(sb.getPointAtLength(1000).direction).toBeCloseTo(direction);
   });
 
   test('`atLength()`', () => {
@@ -342,6 +355,8 @@ describe('StraightBond class', () => {
     line.x2 = { baseVal: { value: 27 } };
     line.y2 = { baseVal: { value: 59 } };
 
+    line.getTotalLength = () => ((2 - 27)**2 + ((-12) - 59)**2)**0.5;
+
     var direction = Math.atan2(59 - (-12), 27 - 2);
 
     line.getPointAtLength = length => ({
@@ -351,14 +366,25 @@ describe('StraightBond class', () => {
 
     var sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
 
-    expect(sb.atLength(17.48)).toStrictEqual({
-      x: 7.80554708752997,
-      y: 4.487753728585112,
+    // a length in the middle of the straight bond
+    expect(sb.atLength(17.48).x).toBeCloseTo(7.80554708752997);
+    expect(sb.atLength(17.48).y).toBeCloseTo(4.487753728585112);
 
-      // includes direction
-      direction,
-    });
-  });
+    // includes direction
+    expect(sb.atLength(17.48).direction).toBeCloseTo(direction);
+
+    // negative length
+    expect(sb.atLength(-10).x).toBeCloseTo(2);
+    expect(sb.atLength(-10).y).toBeCloseTo(-12);
+
+    expect(sb.atLength(-10).direction).toBeCloseTo(direction);
+
+    // length greater than the length of the straight bond
+    expect(sb.atLength(1000).x).toBeCloseTo(27);
+    expect(sb.atLength(1000).y).toBeCloseTo(59);
+
+    expect(sb.atLength(1000).direction).toBeCloseTo(direction);
+});
 
   describe('point1 getter', () => {
     it('returns point 1', () => {

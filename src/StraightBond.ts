@@ -217,6 +217,12 @@ export class StraightBond<B extends Nucleobase> {
    * Note that this method might throw if the straight bond has not been added to the document of the webpage.
    */
   getPointAtLength(length: number) {
+    if (length < 0) {
+      length = 0;
+    } else if (length > this.length) {
+      length = this.length;
+    }
+
     let p = this.domNode.getPointAtLength(length);
 
     return {
