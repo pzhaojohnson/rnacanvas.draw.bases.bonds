@@ -93,6 +93,12 @@ sb.atLength(5).y; // 15
 sb.atLength(5).direction; // Math.PI / 2
 ```
 
+For negative lengths,
+returns the starting point of a straight bond (i.e., point 1).
+
+For lengths greater than the length of a straight bond,
+returns the end point of the straight bond (i.e., point 2).
+
 ### `readonly direction`
 
 The direction angle from point 1 to point 2 of a straight bond (in radians).
