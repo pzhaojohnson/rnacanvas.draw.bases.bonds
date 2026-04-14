@@ -333,6 +333,33 @@ describe('StraightBond class', () => {
     });
   });
 
+  test('`atLength()`', () => {
+    var line = createSVGLineElement();
+
+    line.x1 = { baseVal: { value: 2 } };
+    line.y1 = { baseVal: { value: -12 } };
+
+    line.x2 = { baseVal: { value: 27 } };
+    line.y2 = { baseVal: { value: 59 } };
+
+    var direction = Math.atan2(59 - (-12), 27 - 2);
+
+    line.getPointAtLength = length => ({
+      x: 2 + (length * Math.cos(direction)),
+      y: (-12) + (length * Math.sin(direction)),
+    });
+
+    var sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
+
+    expect(sb.atLength(17.48)).toStrictEqual({
+      x: 7.80554708752997,
+      y: 4.487753728585112,
+
+      // includes direction
+      direction,
+    });
+  });
+
   describe('point1 getter', () => {
     it('returns point 1', () => {
       let line = createSVGLineElement();

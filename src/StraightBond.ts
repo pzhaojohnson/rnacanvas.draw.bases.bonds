@@ -228,6 +228,13 @@ export class StraightBond<B extends Nucleobase> {
   }
 
   /**
+   * An alias for the `getPointAtLength()` method.
+   */
+  atLength(length: number) {
+    return this.getPointAtLength(length);
+  }
+
+  /**
    * The point connecting with base 1 of the straight bond.
    */
   get point1(): Point {
