@@ -298,6 +298,14 @@ describe('StraightBond class', () => {
     expect(sb.getTotalLength()).toBe(18.0273994);
   });
 
+  test('`get length()`', () => {
+    let line = createSVGLineElement();
+    line.getTotalLength = () => 18.0273994;
+
+    let sb = new StraightBond(line, new NucleobaseMock(), new NucleobaseMock());
+    expect(sb.length).toBe(18.0273994);
+  });
+
   test('getPointAtLength method', () => {
     let line = createSVGLineElement();
     line.getPointAtLength = length => length === 17.48 ? { x: 84.02, y: -12.338 } : { x: 0, y: 0 };

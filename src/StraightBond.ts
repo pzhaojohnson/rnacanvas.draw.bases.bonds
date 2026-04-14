@@ -205,6 +205,13 @@ export class StraightBond<B extends Nucleobase> {
   }
 
   /**
+   * Equal to total length.
+   */
+  get length(): number {
+    return this.getTotalLength();
+  }
+
+  /**
    * Get a point along the length of the straight bond (going from point 1 to point 2).
    *
    * Note that this method might throw if the straight bond has not been added to the document of the webpage.
