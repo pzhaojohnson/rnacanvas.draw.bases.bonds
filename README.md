@@ -55,6 +55,44 @@ sb.basePadding2 = 2;
 sb.length; // 7
 ```
 
+### `atLength()`
+
+Returns the point at a given length along a straight bond.
+
+<b>This method may not work correctly
+if a straight bond has not been added to a drawing that is part of the document body.</b>
+
+```javascript
+// an RNAcanvas drawing
+var drawing = new Drawing();
+
+// add to the document body
+document.body.append(drawing.domNode);
+
+var base1 = drawing.addBase('A');
+var base2 = drawing.addBase('U');
+
+base1.centerX = 0;
+base1.centerY = 10;
+
+base2.centerX = 0;
+base2.centerY = 20;
+
+var sb = StraightBond.between(base1, base2);
+
+// add to the drawing
+drawing.domNode.append(sb.domNode);
+
+sb.basePadding1 = 0;
+sb.basePadding2 = 0;
+
+sb.atLength(5).x; // 0
+sb.atLength(5).y; // 15
+
+// the direction of the straight bond is also included
+sb.atLength(5).direction; // Math.PI / 2
+```
+
 ### `readonly direction`
 
 The direction angle from point 1 to point 2 of a straight bond (in radians).
