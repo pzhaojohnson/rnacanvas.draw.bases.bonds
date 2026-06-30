@@ -11,8 +11,8 @@ npm install @rnacanvas/draw.bases.bonds
 All exports of this package can be accessed as named imports.
 
 ```javascript
-// an example import
-import { StraightBond } from '@rnacanvas/draw.bases.bonds';
+// some example imports
+import { StraightBond, CurvedBond } from '@rnacanvas/draw.bases.bonds';
 ```
 
 ## `class StraightBond`
@@ -173,3 +173,9 @@ sb.basePadding1 += 10; // listener called
 sb.removeEventListener('change', listener);
 sb.basePadding1 += 10; // listener not called
 ```
+
+## `class CurvedBond`
+
+A bond that can be curved (e.g., often used for tertiary bonds).
+
+See documentation [here](https://pzhaojohnson.github.io/rnacanvas.draw.bonds.curved/).
