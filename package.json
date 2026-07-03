@@ -1,6 +1,6 @@
 {
   "name": "@rnacanvas/draw.bases.bonds",
-  "version": "14.1.1",
+  "version": "14.1.2",
   "description": "Draw bonds between bases",
   "repository": {
     "type": "git",
