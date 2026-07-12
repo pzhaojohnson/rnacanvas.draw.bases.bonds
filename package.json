@@ -1,6 +1,6 @@
 {
   "name": "@rnacanvas/draw.bases.bonds",
-  "version": "14.1.3",
+  "version": "14.1.4",
   "description": "Draw bonds between bases",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "@rnacanvas/draw.svg": "^3.3.0",
     "@rnacanvas/points": "^1.12.0",
     "@rnacanvas/points.oopified": "^2.2.0",
-    "@rnacanvas/utilities": "^8.0.0",
+    "@rnacanvas/utilities": "^9.0.0",
     "@rnacanvas/value-check": "^2.7.0",
     "@svgdotjs/svg.js": "^3.2.0",
     "svg-pathdata": "^9.0.0"
