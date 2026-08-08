@@ -1,6 +1,6 @@
 {
   "name": "@rnacanvas/draw.bases.bonds",
-  "version": "14.4.1",
+  "version": "15.0.0",
   "description": "Draw bonds between bases",
   "repository": {
     "type": "git",
@@ -26,9 +26,9 @@
     "webpack-cli": "^7.0.2"
   },
   "dependencies": {
-    "@rnacanvas/base-pairs": "^2.5.0",
-    "@rnacanvas/draw.bonds.curved": "^2.8.0",
-    "@rnacanvas/draw.svg": "^3.3.0",
+    "@rnacanvas/base-pairs": "^4.0.0",
+    "@rnacanvas/draw.bonds.curved": "^3.0.0",
+    "@rnacanvas/draw.svg": "^4.0.0",
     "@rnacanvas/points": "^1.12.0",
     "@rnacanvas/points.oopified": "^2.2.0",
     "@rnacanvas/utilities": "^9.0.0",
