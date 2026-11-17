@@ -467,6 +467,17 @@ export class StraightBond<B extends Nucleobase> {
 
     return sb;
   }
+
+  /**
+   * Recreates a saved straight bond from its serialized form.
+   *
+   * Throws if unable to do so.
+   *
+   * An alias for the static `deserialized()` method.
+   */
+  static recreate<B extends Nucleobase>(savedStraightBond: unknown, parentDrawing: Drawing<B>) {
+    return StraightBond.deserialized(savedStraightBond, parentDrawing);
+  }
 }
 
 type EventListeners = {

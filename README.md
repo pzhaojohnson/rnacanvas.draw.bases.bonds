@@ -174,6 +174,39 @@ sb.removeEventListener('change', listener);
 sb.basePadding1 += 10; // listener not called
 ```
 
+### `static recreate()`
+
+(An alias for the `static deserialized()` method.)
+
+Recreates a saved straight bond from its serialized form
+(given the parent drawing that it's in).
+
+The DOM node and bases of the straight bond must already be present in the parent drawing.
+
+Throws if unable to recreate the straight bond.
+
+```javascript
+// an RNAcanvas drawing
+var drawing = new Drawing();
+
+var base1 = drawing.addBase('G');
+var base2 = drawing.addBase('C');
+
+var sb1 = StraightBond.between(base1, base2);
+
+// add to the drawing
+drawing.domNode.append(sb1.domNode);
+
+var savedBond = sb1.serialized();
+
+var sb2 = StraightBond.recreate(savedBond, drawing);
+
+sb2.domNode === sb1.domNode; // true
+
+sb2.base1 === base1; // true
+sb2.base2 === base2; // true
+```
+
 ## `class CurvedBond`
 
 A bond that can be curved (e.g., often used for tertiary bonds).

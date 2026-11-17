@@ -33,6 +33,12 @@ function createSVGLineElement() {
   return (new SVG.Line()).node;
 }
 
+beforeAll(() => {
+  if (!globalThis.SVGLineElement) {
+    globalThis.SVGLineElement = SVGElement;
+  }
+});
+
 describe('StraightBond class', () => {
   describe('between static method', () => {
     it('passes bases 1 and 2 to the newly created straight bond in the correct order', () => {
@@ -702,10 +708,6 @@ describe('StraightBond class', () => {
     sb1.basePadding1 = 12.7846174;
     sb1.basePadding2 = 4.76824;
 
-    // JSDOM does not define `SVGLineElement`
-    expect(globalThis.SVGLineElement).toBeFalsy();
-    globalThis.SVGLineElement = SVGElement;
-
     let sb2 = StraightBond.deserialized(sb1.serialized(), parentDrawing);
 
     expect(sb2.domNode).toBe(sb1.domNode);
@@ -733,6 +735,38 @@ describe('StraightBond class', () => {
 
     expect(sb2.basePadding1).toBeCloseTo(-8.735814, 6);
     expect(sb2.basePadding2).toBeCloseTo(65.41487, 6);
+  });
+
+  test('`static recreate()`', () => {
+    let parentDrawing = new DrawingMock();
+
+    let base1 = parentDrawing.bases[2];
+    let base2 = parentDrawing.bases[7];
+
+    let sb1 = StraightBond.between(base1, base2);
+
+    parentDrawing.domNode.insertBefore(sb1.domNode, parentDrawing.domNode.childNodes[3]);
+
+    sb1.basePadding1 = 6.18235;
+    sb1.basePadding2 = 17.0942;
+
+    let sb2 = StraightBond.recreate(sb1.serialized(), parentDrawing);
+
+    expect(sb2).toBeInstanceOf(StraightBond);
+    expect(sb2).not.toBe(sb1);
+
+    expect(sb2.domNode).toBe(sb1.domNode);
+
+    expect(sb2.base1).toBe(sb1.base1);
+    expect(sb2.base2).toBe(sb1.base2);
+
+    expect(sb2.basePadding1).toBeCloseTo(6.18235);
+    expect(sb2.basePadding2).toBeCloseTo(17.0942);
+
+    // throws just like the static `deserialized()` method
+    expect(() => StraightBond.recreate(null, parentDrawing)).toThrow();
+    expect(() => StraightBond.recreate({ ...sb1.serialized(), id: undefined }, parentDrawing)).toThrow();
+    expect(() => StraightBond.recreate({ ...sb1.serialized(), baseID1: 'id-nonexistent' }, parentDrawing)).toThrow();
   });
 });
 
